@@ -1,0 +1,22 @@
+{
+  "collectionName": "components_navigation_links",
+  "info": {
+    "displayName": "links",
+    "icon": "archway"
+  },
+  "options": {},
+  "attributes": {
+    "href": {
+      "type": "string"
+    },
+    "text": {
+      "type": "string"
+    },
+    "target": {
+      "type": "enumeration",
+      "enum": [
+        "_blank"
+      ]
+    }
+  }
+}

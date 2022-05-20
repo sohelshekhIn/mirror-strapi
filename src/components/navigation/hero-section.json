@@ -1,0 +1,55 @@
+{
+  "collectionName": "components_navigation_hero_sections",
+  "info": {
+    "displayName": "Hero Section",
+    "icon": "align-left",
+    "description": ""
+  },
+  "options": {},
+  "attributes": {
+    "title1": {
+      "type": "string"
+    },
+    "title2": {
+      "type": "string"
+    },
+    "desc": {
+      "type": "string"
+    },
+    "slides": {
+      "type": "media",
+      "multiple": true,
+      "required": false,
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ]
+    },
+    "links": {
+      "displayName": "links",
+      "type": "component",
+      "repeatable": true,
+      "component": "navigation.links"
+    },
+    "WhyMirror": {
+      "displayName": "WhyMirror",
+      "type": "component",
+      "repeatable": false,
+      "component": "navigation.why-mirror"
+    },
+    "courses": {
+      "displayName": "Courses",
+      "type": "component",
+      "repeatable": true,
+      "component": "navigation.courses"
+    },
+    "testimonial": {
+      "displayName": "Testimonial",
+      "type": "component",
+      "repeatable": true,
+      "component": "navigation.testimonial"
+    }
+  }
+}

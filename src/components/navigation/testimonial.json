@@ -1,0 +1,29 @@
+{
+  "collectionName": "components_navigation_testimonials",
+  "info": {
+    "displayName": "Testimonial",
+    "icon": "angle-double-right"
+  },
+  "options": {},
+  "attributes": {
+    "Name": {
+      "type": "string"
+    },
+    "Designation": {
+      "type": "string"
+    },
+    "Testimonial": {
+      "type": "text"
+    },
+    "avatar": {
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ],
+      "type": "media",
+      "multiple": false
+    }
+  }
+}

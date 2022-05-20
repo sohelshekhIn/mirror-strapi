@@ -1,0 +1,22 @@
+{
+  "collectionName": "components_navigation_nav_links",
+  "info": {
+    "displayName": "navLinks",
+    "icon": "align-justify"
+  },
+  "options": {},
+  "attributes": {
+    "href": {
+      "type": "string"
+    },
+    "text": {
+      "type": "string"
+    },
+    "target": {
+      "type": "enumeration",
+      "enum": [
+        "_blank"
+      ]
+    }
+  }
+}

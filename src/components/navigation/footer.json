@@ -1,0 +1,23 @@
+{
+  "collectionName": "components_navigation_footers",
+  "info": {
+    "displayName": "Footer",
+    "icon": "angle-double-down"
+  },
+  "options": {},
+  "attributes": {
+    "leftLogo": {
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ],
+      "type": "media",
+      "multiple": false
+    },
+    "lefftFooterDescription": {
+      "type": "richtext"
+    }
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "collectionName": "components_navigation_footer_columns",
+  "info": {
+    "displayName": "FooterColumns",
+    "icon": "angle-down"
+  },
+  "options": {},
+  "attributes": {
+    "text": {
+      "type": "string"
+    },
+    "FooterLinks": {
+      "type": "component",
+      "repeatable": true,
+      "component": "navigation.links"
+    }
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "collectionName": "components_navigation_courses",
+  "info": {
+    "displayName": "Courses",
+    "icon": "audio-description"
+  },
+  "options": {},
+  "attributes": {
+    "course_text": {
+      "type": "string"
+    },
+    "href": {
+      "type": "string"
+    },
+    "bgOverlay": {
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ],
+      "type": "media",
+      "multiple": true
+    }
+  }
+}
