@@ -1,0 +1,16 @@
+{
+  "collectionName": "components_navigation_footer_edings",
+  "info": {
+    "displayName": "FooterEdings",
+    "icon": "arrow-circle-up"
+  },
+  "options": {},
+  "attributes": {
+    "CopyrightText": {
+      "type": "string"
+    },
+    "CreditTexts": {
+      "type": "string"
+    }
+  }
+}

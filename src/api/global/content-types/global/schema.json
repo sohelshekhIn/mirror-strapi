@@ -17,28 +17,26 @@
       "repeatable": true,
       "component": "navigation.nav-links"
     },
-    "LoginButton": {
+    "NavLoginButton": {
       "type": "component",
-      "repeatable": true,
-      "component": "navigation.right-button"
+      "repeatable": false,
+      "component": "navigation.links"
     },
     "Footer": {
-      "displayName": "Footer",
       "type": "component",
       "repeatable": false,
       "component": "navigation.footer"
     },
     "FooterColumns": {
-      "displayName": "FooterColumns",
       "type": "component",
       "repeatable": true,
       "component": "navigation.footer-columns"
     },
-    "FooterCopyRightText": {
-      "type": "string"
-    },
-    "FooterCreditText": {
-      "type": "string"
+    "FooterCredits": {
+      "displayName": "FooterEdings",
+      "type": "component",
+      "repeatable": false,
+      "component": "navigation.footer-edings"
     }
   }
 }
