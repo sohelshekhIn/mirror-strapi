@@ -11,7 +11,7 @@
       "type": "string"
     },
     "title2": {
-      "type": "string"
+      "type": "text"
     },
     "desc": {
       "type": "string"
