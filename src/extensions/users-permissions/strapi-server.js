@@ -25,7 +25,6 @@ module.exports = (plugin) => {
         },
       }
     );
-
     ctx.body = sanitizeOutput(user);
   };
 
