@@ -15,11 +15,33 @@ module.exports = {
     //     ? "localhost"
     //     : strapi.config.server.host;
     const absoluteURL = `http://${hostname}:${strapi.config.server.port}`;
+    const sanitizeOutput = (user) => {
+      const {
+        password,
+        resetPasswordToken,
+        confirmationToken,
+        ...sanitizedUser
+      } = user; // be careful, you need to omit other private attributes yourself
+      return sanitizedUser;
+    };
 
     try {
       console.log("Tryin to login");
       // Now submit the credentials to Strapi's default login endpoint
-      const { data } = await axios.post(`${absoluteURL}/api/auth/local`, body);
+      let { data } = await axios.post(`${absoluteURL}/api/auth/local`, body);
+
+      const populatedUser = await strapi.entityService.findOne(
+        "plugin::users-permissions.user",
+        data.user.id,
+        {
+          populate: {
+            role: {
+              fields: ["type"],
+            },
+          },
+        }
+      );
+      data.user = sanitizeOutput(populatedUser);
       // Set the secure cookie
       if (data && data.jwt) {
         ctx.cookies.set("jwt", data.jwt, {

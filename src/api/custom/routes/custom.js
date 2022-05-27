@@ -2,12 +2,12 @@ module.exports = {
   routes: [
     {
       method: "POST",
-      path: "/auth/cookielogin",
+      path: "/auth/login",
       handler: "custom.index",
     },
     {
       method: "POST",
-      path: "/logout",
+      path: "/auth/logout",
       handler: "custom.logout",
     },
   ],
