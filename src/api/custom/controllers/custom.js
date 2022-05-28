@@ -1,13 +1,8 @@
 const axios = require("axios");
 
 module.exports = {
-  // GET /auth/cookielogin
   async index(ctx) {
-    // Capture the request body (identifier and password)
     const { body } = ctx.request;
-
-    // Build Strapi's Absolute Server URL.
-    // Copied from https://github.com/strapi/strapi/blob/86e0cf0f55d58e714a67cf4daee2e59e39974dd9/packages/strapi-utils/lib/config.js#L62
     const hostname = "localhost";
     // const hostname =
     //   strapi.config.environment === "development" &&
@@ -21,13 +16,12 @@ module.exports = {
         resetPasswordToken,
         confirmationToken,
         ...sanitizedUser
-      } = user; // be careful, you need to omit other private attributes yourself
+      } = user;
       return sanitizedUser;
     };
 
     try {
       console.log("Tryin to login");
-      // Now submit the credentials to Strapi's default login endpoint
       let { data } = await axios.post(`${absoluteURL}/api/auth/local`, body);
 
       const populatedUser = await strapi.entityService.findOne(
