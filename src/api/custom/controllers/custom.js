@@ -1,7 +1,7 @@
 const axios = require("axios");
 
 module.exports = {
-  async index(ctx) {
+  async login(ctx) {
     const { body } = ctx.request;
     const hostname = "localhost";
     // const hostname =
@@ -21,7 +21,6 @@ module.exports = {
     };
 
     try {
-      console.log("Tryin to login");
       let { data } = await axios.post(`${absoluteURL}/api/auth/local`, body);
 
       const populatedUser = await strapi.entityService.findOne(
@@ -49,8 +48,19 @@ module.exports = {
       // Respond with the jwt + user data, but now this response also sets the JWT as a secure cookie
       return ctx.send(data);
     } catch (error) {
-      console.log("An error occurred:", error.response);
-      return ctx.badRequest(null, error);
+      // if error is invalid credentials return 400 with message "Invalid credentials"
+      if (
+        error.response.status === 400 &&
+        error.response.data.error.name === "ValidationError"
+      ) {
+        return ctx.badRequest(null, {
+          messages: {
+            id: "invalid_credentials",
+            message: "Invalid credentials",
+          },
+        });
+      }
+      return ctx.badRequest(error);
     }
   },
 

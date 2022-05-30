@@ -3,7 +3,7 @@ module.exports = {
     {
       method: "POST",
       path: "/auth/login",
-      handler: "custom.index",
+      handler: "custom.login",
     },
     {
       method: "POST",

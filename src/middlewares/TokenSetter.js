@@ -1,7 +1,10 @@
 module.exports = () => {
   return async (ctx, next) => {
     const cookies = ctx.request.header.cookie || false;
-    if (cookies) {
+    if (
+      cookies &&
+      cookies.split(";").find((c) => c.trim().startsWith("jwt="))
+    ) {
       let token = cookies
         .split(";")
         .find((c) => c.trim().startsWith("jwt="))
