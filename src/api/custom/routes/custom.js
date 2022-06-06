@@ -15,5 +15,10 @@ module.exports = {
       path: "/attendance/check",
       handler: "custom.checkAttendance",
     },
+    {
+      method: "GET",
+      path: "/attendance/me",
+      handler: "custom.getStudentAttendance",
+    },
   ],
 };
