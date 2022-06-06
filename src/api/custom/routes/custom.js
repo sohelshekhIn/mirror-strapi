@@ -7,8 +7,13 @@ module.exports = {
     },
     {
       method: "POST",
-      path: "/auth/logout",
-      handler: "custom.logout",
+      path: "/attendance/students",
+      handler: "custom.GetStudents",
+    },
+    {
+      method: "GET",
+      path: "/attendance/check",
+      handler: "custom.checkAttendance",
     },
   ],
 };

@@ -1,0 +1,30 @@
+{
+  "kind": "collectionType",
+  "collectionName": "attendances",
+  "info": {
+    "singularName": "attendance",
+    "pluralName": "attendances",
+    "displayName": "Attendance",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "attendanceMethod": {
+      "type": "boolean",
+      "default": false,
+      "required": true
+    },
+    "data": {
+      "type": "json",
+      "required": true
+    },
+    "AttendanceId": {
+      "type": "string",
+      "required": true,
+      "unique": true
+    }
+  }
+}

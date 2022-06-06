@@ -1,0 +1,24 @@
+{
+  "kind": "collectionType",
+  "collectionName": "batches",
+  "info": {
+    "singularName": "batch",
+    "pluralName": "batches",
+    "displayName": "Batch"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "batch": {
+      "type": "string"
+    },
+    "users": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "plugin::users-permissions.user",
+      "mappedBy": "batch"
+    }
+  }
+}

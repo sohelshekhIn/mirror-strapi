@@ -35,17 +35,6 @@ module.exports = {
         }
       );
       data.user = sanitizeOutput(populatedUser);
-      // Set the secure cookie
-      if (data && data.jwt) {
-        ctx.cookies.set("jwt", data.jwt, {
-          httpOnly: true,
-          secure: false,
-          maxAge: 1000 * 60 * 60 * 24 * 14, // 14 Day Age
-          domain: "localhost",
-        });
-      }
-
-      // Respond with the jwt + user data, but now this response also sets the JWT as a secure cookie
       return ctx.send(data);
     } catch (error) {
       // if error is invalid credentials return 400 with message "Invalid credentials"
@@ -64,11 +53,50 @@ module.exports = {
     }
   },
 
-  async logout(ctx) {
-    ctx.cookies.set("jwt", null);
-    ctx.send({
-      authorized: true,
-      message: "Successfully destroyed session",
-    });
+  async GetStudents(ctx) {
+    const studBatch = ctx.request.body.data.batch;
+    const students = await strapi.entityService.findMany(
+      "plugin::users-permissions.user",
+      {
+        filters: {
+          role: {
+            type: "student",
+          },
+          batch: {
+            batch: studBatch,
+          },
+        },
+        fields: ["name", "UserID"],
+      }
+    );
+    console.log(students);
+    return ctx.send(students);
+  },
+
+  // check attendance of student
+  async checkAttendance(ctx) {
+    // get ?batch=batch from url
+    const batch = ctx.request.query.batch;
+    let today = new Date();
+    let dd = String(today.getDate()).padStart(2, "0");
+    let mm = String(today.getMonth() + 1).padStart(2, "0"); //January is 0!
+    let yyyy = today.getFullYear();
+    today = dd + "/" + mm + "/" + yyyy;
+    const attendanceId = batch.replace(/\s/g, "") + "_" + today;
+
+    // find attendance in attendance table with AttendanceId
+    const attendance = await strapi.entityService.findMany(
+      "api::attendance.attendance",
+      {
+        filters: {
+          AttendanceId: attendanceId,
+        },
+      }
+    );
+    // if attendance is found return attendance, else return with found = false
+    if (attendance.length > 0) {
+      return ctx.send(attendance);
+    }
+    return ctx.send({ found: false });
   },
 };
