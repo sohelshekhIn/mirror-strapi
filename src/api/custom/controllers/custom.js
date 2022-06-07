@@ -107,6 +107,9 @@ module.exports = {
   async getStudentAttendance(ctx) {
     let { batch, id } = ctx.request.query;
     batch = batch.replace(/\s/g, "") + "_";
+
+    console.log(batch, id);
+    console.log(typeof id);
     // for every record in attendance table
     const attendance = await strapi.entityService.findMany(
       "api::attendance.attendance",
@@ -120,19 +123,21 @@ module.exports = {
     );
 
     let attendances = {};
-    let found = false;
+    let foundData = true;
     if (attendance === undefined) {
       return ctx.badRequest(null, {
         message: "No Batch Found",
       });
     }
     for (let key in attendance) {
-      if (attendance[key].data.indexOf(id) > -1) {
-        found = true;
+      if ((attendance[key].data.indexOf(id) === -1) === true) {
+        foundData = false;
+      } else {
+        foundData = true;
       }
       attendances[attendance[key].AttendanceId.split("_")[1]] = {
         method: attendance[key].attendanceMethod,
-        found: found,
+        found: foundData,
       };
     }
     return ctx.send(attendances);
