@@ -72,7 +72,6 @@ module.exports = {
         fields: ["name", "UserID"],
       }
     );
-    console.log(students);
     return ctx.send(students);
   },
 
