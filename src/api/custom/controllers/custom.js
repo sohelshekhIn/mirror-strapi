@@ -108,8 +108,6 @@ module.exports = {
     let { batch, id } = ctx.request.query;
     batch = batch.replace(/\s/g, "") + "_";
 
-    console.log(batch, id);
-    console.log(typeof id);
     // for every record in attendance table
     const attendance = await strapi.entityService.findMany(
       "api::attendance.attendance",
