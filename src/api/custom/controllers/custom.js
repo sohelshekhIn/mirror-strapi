@@ -22,7 +22,6 @@ module.exports = {
 
     try {
       let { data } = await axios.post(`${absoluteURL}/api/auth/local`, body);
-
       const populatedUser = await strapi.entityService.findOne(
         "plugin::users-permissions.user",
         data.user.id,
@@ -40,6 +39,7 @@ module.exports = {
       data.user = sanitizeOutput(populatedUser);
       return ctx.send(data);
     } catch (error) {
+      console.log(error);
       // if error is invalid credentials return 400 with message "Invalid credentials"
       if (
         error.response.status === 400 &&
@@ -57,7 +57,7 @@ module.exports = {
   },
 
   async GetStudents(ctx) {
-    const studBatch = ctx.request.body.data.batch;
+    const studBatch = ctx.request.query.batch;
     const students = await strapi.entityService.findMany(
       "plugin::users-permissions.user",
       {
@@ -140,52 +140,134 @@ module.exports = {
     return ctx.send(attendances);
   },
 
-  // async getStudentAttendanceSide(ctx) {
-  //   const { batch, id } = ctx.request.query;
-  //   console.log(id, batch);
-  //   // generate list of last 31 dates
-  //   let today = new Date();
-  //   let dd = String(today.getDate()).padStart(2, "0");
-  //   let mm = String(today.getMonth() + 1).padStart(2, "0"); //January is 0!
-  //   let yyyy = today.getFullYear();
-  //   today = dd + "/" + mm + "/" + yyyy;
-  //   let dates = [];
-  //   for (let i = 0; i < 31; i++) {
-  //     let date = new Date(today);
-  //     date.setDate(date.getDate() - i);
-  //     let dd = String(date.getDate()).padStart(2, "0");
-  //     let mm = String(date.getMonth() + 1).padStart(2, "0"); //January is 0!
-  //     let yyyy = date.getFullYear();
-  //     dates.push(dd + "/" + mm + "/" + yyyy);
-  //   }
-  //   dates.reverse();
-  //   // for each date in dates, find attendance in attendance table with AttendanceId
-  //   let attendances = {};
-  //   for (let i = 0; i < dates.length; i++) {
-  //     const attendanceId = batch.replace(/\s/g, "") + "_" + dates[i];
-  //     const attendance = await strapi.entityService.findMany(
-  //       "api::attendance.attendance",
-  //       {
-  //         filters: {
-  //           AttendanceId: attendanceId,
-  //         },
-  //       }
-  //     );
+  // add student data to Users Table and Student Details Table
+  async registerStudent(ctx) {
+    const bodyData = ctx.request.body.data;
+    console.log(bodyData);
+    const startTime = new Date();
+    // Generate unique UserID for student
+    const generateUserId = () => {
+      return "ST" + Math.floor(Math.random() * 1000000);
+    };
+    const UserIdChecker = async (userId) => {
+      // Probablity of getting same UserID is low, so we need to check if UserID already exists
+      let user = await strapi.entityService.findMany(
+        "plugin::users-permissions.user",
+        {
+          filters: {
+            UserID: userId,
+          },
+        }
+      );
+      return user;
+    };
 
-  //     if (attendance.length == 0) {
-  //       attendances[dates[i]] = false;
-  //     } else {
-  //       let found = false;
-  //       if (attendance[0].data.indexOf(id) > -1) {
-  //         found = true;
-  //       }
-  //       attendances[dates[i]] = {
-  //         method: attendance[0].attendanceMethod,
-  //         found: found,
-  //       };
-  //     }
-  //   }
+    // Generate unique UserID
+    // What is the probability of a user ID being generated twice?
+    // It's very low, but it's possible.
+    // So we'll just keep trying until we get a unique one.
+    let userId = generateUserId();
+    let existingUser = await UserIdChecker(userId);
+    while (existingUser.length > 0) {
+      userId = generateUserId();
+      existingUser = await UserIdChecker(userId);
+    }
 
-  //   return ctx.send(attendances);
-  // },
+    const userName = "MIR" + userId;
+    const password = "MIR" + userId;
+    const email = userName + "@mirrorinstitue.com";
+
+    const user = await strapi.entityService.create(
+      "plugin::users-permissions.user",
+      {
+        data: {
+          UserID: userId,
+          name: bodyData.name,
+          email: email,
+          username: userName,
+          password: password,
+          role: process.env.STUDENT_ROLE_ID,
+          batch: bodyData.batch,
+          subjects: bodyData.subjects,
+          gender: bodyData.gender,
+          blocked: bodyData.blocked,
+          canLogin: bodyData.canLogin,
+        },
+      }
+    );
+
+    if (user.error) {
+      return ctx.badRequest(error);
+    } else {
+      const StudentDetails = await strapi.entityService.create(
+        "api::student-detail.student-detail",
+        {
+          data: {
+            UserID: userId,
+            fatherName: bodyData.fatherName,
+            motherName: bodyData.motherName,
+            fatherMobile: bodyData.fatherMobile,
+            motherMobile: bodyData.motherMobile,
+            msgMobile: bodyData.msgMobile,
+            joinDate: bodyData.joinDate,
+            dob: bodyData.dob,
+            school: bodyData.school,
+          },
+        }
+      );
+      if (StudentDetails.error) {
+        return ctx.badRequest(error);
+      }
+      const endTime = new Date();
+      const timeTaken = endTime - startTime;
+      console.log(timeTaken);
+      return ctx.send({ user, StudentDetails });
+    }
+  },
+
+  async getStudentsForView(ctx) {
+    const classNo = ctx.request.body.data.class;
+    const batch = ctx.request.body.data.batch;
+    let query = classNo;
+    if (batch) {
+      query = batch;
+    }
+
+    const studentUser = await strapi.entityService.findMany(
+      "plugin::users-permissions.user",
+      {
+        filters: {
+          batch: {
+            batch: {
+              $contains: [query],
+            },
+          },
+        },
+      }
+    );
+    // as soon as we get the students, we need to get the details of the students
+    const students = await strapi.entityService.findMany(
+      "api::student-detail.student-detail",
+      {
+        filters: {
+          UserID: {
+            $in: studentUser.map((user) => user.UserID),
+          },
+        },
+      }
+    );
+
+    // now we need to merge the students and students details
+    let studentsWithDetails = [];
+    for (let key in students) {
+      studentsWithDetails.push({
+        ...students[key],
+        ...studentUser.find((user) => user.UserID === students[key].UserID),
+      });
+    }
+    return ctx.send(studentsWithDetails);
+    // return ctx.send({ studentUser, students });
+
+    // return ctx.send("Hello");
+  },
 };

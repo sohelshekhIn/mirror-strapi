@@ -4,7 +4,8 @@
   "info": {
     "singularName": "batch",
     "pluralName": "batches",
-    "displayName": "Batch"
+    "displayName": "Batch",
+    "description": ""
   },
   "options": {
     "draftAndPublish": false
@@ -13,6 +14,9 @@
   "attributes": {
     "batch": {
       "type": "string"
+    },
+    "subjects": {
+      "type": "json"
     },
     "users": {
       "type": "relation",

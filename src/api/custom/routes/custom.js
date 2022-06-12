@@ -5,20 +5,33 @@ module.exports = {
       path: "/auth/login",
       handler: "custom.login",
     },
+
+    // /info/ path to get info in public/login domain
     {
-      method: "POST",
-      path: "/attendance/students",
+      method: "GET",
+      path: "/info/attendance/students",
       handler: "custom.GetStudents",
     },
     {
       method: "GET",
-      path: "/attendance/check",
+      path: "/info/attendance/check",
       handler: "custom.checkAttendance",
     },
     {
       method: "GET",
-      path: "/attendance/me",
+      path: "/info/attendance/me",
       handler: "custom.getStudentAttendance",
+    },
+
+    {
+      method: "POST",
+      path: "/data/students/register",
+      handler: "custom.registerStudent",
+    },
+    {
+      method: "POST",
+      path: "/data/students/view",
+      handler: "custom.getStudentsForView",
     },
   ],
 };

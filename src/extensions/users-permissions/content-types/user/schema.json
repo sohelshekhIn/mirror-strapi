@@ -77,6 +77,22 @@
     "name": {
       "type": "string",
       "required": true
+    },
+    "subjects": {
+      "type": "json",
+      "required": false
+    },
+    "gender": {
+      "type": "enumeration",
+      "enum": [
+        "Male",
+        "Female"
+      ]
+    },
+    "canLogin": {
+      "type": "boolean",
+      "default": true,
+      "required": true
     }
   }
 }

@@ -1,0 +1,45 @@
+{
+  "kind": "collectionType",
+  "collectionName": "student_details",
+  "info": {
+    "singularName": "student-detail",
+    "pluralName": "student-details",
+    "displayName": "Student Details",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "UserID": {
+      "type": "string",
+      "required": true,
+      "unique": true
+    },
+    "fatherName": {
+      "type": "string"
+    },
+    "motherName": {
+      "type": "string"
+    },
+    "fatherMobile": {
+      "type": "biginteger"
+    },
+    "motherMobile": {
+      "type": "biginteger"
+    },
+    "msgMobile": {
+      "type": "biginteger"
+    },
+    "joinDate": {
+      "type": "string"
+    },
+    "dob": {
+      "type": "string"
+    },
+    "school": {
+      "type": "string"
+    }
+  }
+}
