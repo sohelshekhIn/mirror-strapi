@@ -228,46 +228,105 @@ module.exports = {
   async getStudentsForView(ctx) {
     const classNo = ctx.request.body.data.class;
     const batch = ctx.request.body.data.batch;
-    let query = classNo;
-    if (batch) {
-      query = batch;
+    const subjects = ctx.request.body.data.subjects;
+    let batchContins = classNo;
+    if (batch && batch !== "DEFAULT") {
+      batchContins = batch;
     }
+
+    let query = {
+      filters: {
+        batch: {
+          batch: {
+            $contains: [batchContins],
+          },
+        },
+      },
+      populate: {
+        batch: {
+          fields: ["batch"],
+        },
+      },
+      fields: [
+        "UserID",
+        "name",
+        "username",
+        "gender",
+        "canLogin",
+        "blocked",
+        "subjects",
+      ],
+    };
 
     const studentUser = await strapi.entityService.findMany(
       "plugin::users-permissions.user",
-      {
-        filters: {
-          batch: {
-            batch: {
-              $contains: [query],
-            },
-          },
-        },
-      }
+      query
     );
+
+    // filter students based on subjects and if even one subject is not present in student's subjects, then remove the student
+    let students = [];
+    for (let key in studentUser) {
+      if (subjects && subjects.length > 0) {
+        let found = false;
+        let contracdictSubjectFound = false;
+        for (let i = 0; i < studentUser[key].subjects.length; i++) {
+          for (let j = 0; j < subjects.length; j++) {
+            if (!contracdictSubjectFound) {
+              if (studentUser[key].subjects.includes(subjects[j])) {
+                found = true;
+              } else {
+                console.log("Found Contra");
+                contracdictSubjectFound = true;
+              }
+            }
+          }
+        }
+        if (found && !contracdictSubjectFound) {
+          students.push(studentUser[key]);
+        }
+      } else {
+        students = studentUser;
+      }
+    }
+
     // as soon as we get the students, we need to get the details of the students
-    const students = await strapi.entityService.findMany(
+    const studentDetails = await strapi.entityService.findMany(
       "api::student-detail.student-detail",
       {
         filters: {
           UserID: {
-            $in: studentUser.map((user) => user.UserID),
+            $in: students.map((user) => user.UserID),
           },
         },
+        fields: [
+          "UserID",
+          "fatherName",
+          "motherName",
+          "fatherMobile",
+          "motherMobile",
+          "msgMobile",
+          "joinDate",
+          "dob",
+          "school",
+        ],
       }
     );
+    // handle errors
+    if (studentUser.error) {
+      return ctx.badRequest(studentUser.error);
+    }
+    if (studentDetails.error) {
+      return ctx.badRequest(studentDetails.error);
+    }
 
     // now we need to merge the students and students details
     let studentsWithDetails = [];
-    for (let key in students) {
+    for (let key in studentDetails) {
       studentsWithDetails.push({
-        ...students[key],
-        ...studentUser.find((user) => user.UserID === students[key].UserID),
+        ...studentDetails[key],
+        ...students.find((user) => user.UserID === studentDetails[key].UserID),
       });
     }
     return ctx.send(studentsWithDetails);
-    // return ctx.send({ studentUser, students });
-
-    // return ctx.send("Hello");
   },
 };
