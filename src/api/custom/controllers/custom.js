@@ -329,4 +329,63 @@ module.exports = {
     }
     return ctx.send(studentsWithDetails);
   },
+
+  async getStudentForViewOne(ctx) {
+    // get userid from params
+    const userId = ctx.request.query.id;
+    // get user details
+    const studentUser = await strapi.entityService.findMany(
+      "plugin::users-permissions.user",
+      {
+        filters: {
+          UserID: userId,
+        },
+        populate: {
+          batch: {
+            fields: ["batch"],
+          },
+        },
+        fields: [
+          "UserID",
+          "name",
+          "username",
+          "gender",
+          "canLogin",
+          "blocked",
+          "subjects",
+        ],
+      }
+    );
+
+    // handle errors
+    if (studentUser.error) {
+      return ctx.badRequest(studentUser.error);
+    }
+
+    // get student details
+    const studentDetails = await strapi.entityService.findMany(
+      "api::student-detail.student-detail",
+      {
+        filters: {
+          UserID: userId,
+        },
+        fields: [
+          "UserID",
+          "fatherName",
+          "motherName",
+          "fatherMobile",
+          "motherMobile",
+          "msgMobile",
+          "joinDate",
+          "dob",
+          "school",
+        ],
+      }
+    );
+
+    if (studentDetails.error) {
+      return ctx.badRequest(studentDetails.error);
+    }
+    return ctx.send({ ...studentUser["0"], ...studentDetails["0"] });
+  },
 };
