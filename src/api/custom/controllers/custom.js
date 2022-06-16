@@ -220,11 +220,30 @@ module.exports = {
       }
       const endTime = new Date();
       const timeTaken = endTime - startTime;
-      console.log(timeTaken);
+      console.log(timeTaken); // get id from both user and Student Details
       return ctx.send({ user, StudentDetails });
     }
   },
 
+  // update students data in Users Table and Student Details Table
+  async updateStudent(ctx) {
+    const bodyData = ctx.request.body.data;
+    const startTime = new Date();
+    const user = await strapi.entityService.update(
+      "plugin::users-permissions.user",
+      bodyData.ReffId.split("_")[0],
+      {
+        data: {
+          name: bodyData.name,
+          email: bodyData.email,
+          username: bodyData.username,
+          password: bodyData.password,
+          batch: bodyData.batch,
+          subjects: bodyData.subjects,
+        },
+      }
+    );
+  },
   async getStudentsForView(ctx) {
     const classNo = ctx.request.body.data.class;
     const batch = ctx.request.body.data.batch;
@@ -386,6 +405,12 @@ module.exports = {
     if (studentDetails.error) {
       return ctx.badRequest(studentDetails.error);
     }
+
+    // add ReffId to student user
+    studentUser[0].ReffId = `${studentUser[0].id}_${studentDetails[0].id}`;
+    // delete studentUser.id
+    delete studentUser[0].id;
+    delete studentDetails[0].id;
     return ctx.send({ ...studentUser["0"], ...studentDetails["0"] });
   },
 };
