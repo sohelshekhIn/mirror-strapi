@@ -143,7 +143,6 @@ module.exports = {
   // add student data to Users Table and Student Details Table
   async registerStudent(ctx) {
     const bodyData = ctx.request.body.data;
-    console.log(bodyData);
     const startTime = new Date();
     // Generate unique UserID for student
     const generateUserId = () => {
@@ -220,7 +219,6 @@ module.exports = {
       }
       const endTime = new Date();
       const timeTaken = endTime - startTime;
-      console.log(timeTaken); // get id from both user and Student Details
       return ctx.send({ user, StudentDetails });
     }
   },
@@ -228,21 +226,57 @@ module.exports = {
   // update students data in Users Table and Student Details Table
   async updateStudent(ctx) {
     const bodyData = ctx.request.body.data;
-    const startTime = new Date();
-    const user = await strapi.entityService.update(
+    const userId = bodyData.reffId.split("_")[0];
+    const detailsId = bodyData.reffId.split("_")[1];
+    const studentUser = await strapi.entityService.update(
       "plugin::users-permissions.user",
-      bodyData.ReffId.split("_")[0],
+      userId,
       {
         data: {
           name: bodyData.name,
-          email: bodyData.email,
-          username: bodyData.username,
-          password: bodyData.password,
+          role: process.env.STUDENT_ROLE_ID,
           batch: bodyData.batch,
           subjects: bodyData.subjects,
+          gender: bodyData.gender,
+          blocked: bodyData.blocked,
+          canLogin: bodyData.canLogin,
         },
       }
     );
+
+    // handle studentUser errors
+    if (studentUser.error) {
+      return ctx.badRequest(error);
+    } else {
+      const studentDetails = await strapi.entityService.update(
+        "api::student-detail.student-detail",
+        detailsId,
+        {
+          data: {
+            fatherName: bodyData.fatherName,
+            motherName: bodyData.motherName,
+            fatherMobile: bodyData.fatherMobile,
+            motherMobile: bodyData.motherMobile,
+            msgMobile: bodyData.msgMobile,
+            joinDate: bodyData.joinDate,
+            dob: bodyData.dob,
+            school: bodyData.school,
+          },
+        }
+      );
+      if (studentDetails.error) {
+        return ctx.badRequest(error);
+      }
+      // add ReffId to student user
+      studentUser.reffId = `${studentUser.id}_${studentDetails.id}`;
+      // delete studentUser.id
+      delete studentUser.id;
+      delete studentDetails.id;
+      return ctx.send({
+        ...studentUser,
+        ...studentDetails,
+      });
+    }
   },
   async getStudentsForView(ctx) {
     const classNo = ctx.request.body.data.class;
@@ -294,7 +328,6 @@ module.exports = {
               if (studentUser[key].subjects.includes(subjects[j])) {
                 found = true;
               } else {
-                console.log("Found Contra");
                 contracdictSubjectFound = true;
               }
             }
@@ -407,7 +440,7 @@ module.exports = {
     }
 
     // add ReffId to student user
-    studentUser[0].ReffId = `${studentUser[0].id}_${studentDetails[0].id}`;
+    studentUser[0].reffId = `${studentUser[0].id}_${studentDetails[0].id}`;
     // delete studentUser.id
     delete studentUser[0].id;
     delete studentDetails[0].id;

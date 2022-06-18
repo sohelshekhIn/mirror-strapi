@@ -35,6 +35,11 @@ module.exports = {
     },
     {
       method: "POST",
+      path: "/data/students/update",
+      handler: "custom.updateStudent",
+    },
+    {
+      method: "POST",
       path: "/data/students/view",
       handler: "custom.getStudentsForView",
     },
