@@ -10,36 +10,37 @@ module.exports = {
     //     ? "localhost"
     //     : strapi.config.server.host;
     const absoluteURL = `http://${hostname}:${strapi.config.server.port}`;
-    const sanitizeOutput = (user) => {
-      const {
-        password,
-        resetPasswordToken,
-        confirmationToken,
-        ...sanitizedUser
-      } = user;
-      return sanitizedUser;
-    };
 
     try {
       let { data } = await axios.post(`${absoluteURL}/api/auth/local`, body);
+      // get role using first two letters of UserId
+      const role =
+        data.user.UserID.substring(0, 2) == "ST" ? "student" : "faculty";
+      let query = {
+        populate: {
+          role: {
+            fields: ["type"],
+          },
+        },
+        fields: ["username", "name", "blocked", "UserID", "gender", "canLogin"],
+      };
+      if (role === "student") {
+        query.populate.batch = {
+          fields: ["batch"],
+        };
+        query.fields.push("subjects");
+      } else {
+        query.fields.push("facultyRoles");
+      }
+
       const populatedUser = await strapi.entityService.findOne(
         "plugin::users-permissions.user",
         data.user.id,
-        {
-          populate: {
-            role: {
-              fields: ["type"],
-            },
-            batch: {
-              fields: ["batch"],
-            },
-          },
-        }
+        query
       );
-      data.user = sanitizeOutput(populatedUser);
+      data.user = populatedUser;
       return ctx.send(data);
     } catch (error) {
-      console.log(error);
       // if error is invalid credentials return 400 with message "Invalid credentials"
       if (
         error.response.status === 400 &&
@@ -49,6 +50,17 @@ module.exports = {
           messages: {
             id: "invalid_credentials",
             message: "Invalid credentials",
+          },
+        });
+      }
+      if (
+        error.response.status === 400 &&
+        error.response.data.error.name === "ApplicationError"
+      ) {
+        return ctx.badRequest(null, {
+          messages: {
+            id: "account_blocked",
+            message: "Account Blocked, contact Administrator",
           },
         });
       }
@@ -143,7 +155,6 @@ module.exports = {
   // add student data to Users Table and Student Details Table
   async registerStudent(ctx) {
     const bodyData = ctx.request.body.data;
-    const startTime = new Date();
     // Generate unique UserID for student
     const generateUserId = () => {
       return "ST" + Math.floor(Math.random() * 1000000);
@@ -180,6 +191,7 @@ module.exports = {
       "plugin::users-permissions.user",
       {
         data: {
+          provider: "local",
           UserID: userId,
           name: bodyData.name,
           email: email,
@@ -194,7 +206,6 @@ module.exports = {
         },
       }
     );
-
     if (user.error) {
       return ctx.badRequest(error);
     } else {
@@ -217,8 +228,6 @@ module.exports = {
       if (StudentDetails.error) {
         return ctx.badRequest(error);
       }
-      const endTime = new Date();
-      const timeTaken = endTime - startTime;
       return ctx.send({ user, StudentDetails });
     }
   },

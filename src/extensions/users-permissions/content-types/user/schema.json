@@ -93,6 +93,9 @@
       "type": "boolean",
       "default": true,
       "required": true
+    },
+    "facultyRoles": {
+      "type": "json"
     }
   }
 }
