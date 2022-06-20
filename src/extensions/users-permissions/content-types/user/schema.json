@@ -94,7 +94,7 @@
       "default": true,
       "required": true
     },
-    "facultyRoles": {
+    "facultyData": {
       "type": "json"
     }
   }

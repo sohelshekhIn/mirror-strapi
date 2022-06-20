@@ -30,7 +30,7 @@ module.exports = {
         };
         query.fields.push("subjects");
       } else {
-        query.fields.push("facultyRoles");
+        query.fields.push("facultyData");
       }
 
       const populatedUser = await strapi.entityService.findOne(
