@@ -1,0 +1,24 @@
+{
+  "kind": "collectionType",
+  "collectionName": "marks",
+  "info": {
+    "singularName": "mark",
+    "pluralName": "marks",
+    "displayName": "Marks",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "TestId": {
+      "type": "string",
+      "required": true
+    },
+    "data": {
+      "type": "json",
+      "required": true
+    }
+  }
+}
