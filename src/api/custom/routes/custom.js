@@ -27,6 +27,11 @@ module.exports = {
       path: "/info/students/view-one",
       handler: "custom.getStudentForViewOne",
     },
+    {
+      method: "POST",
+      path: "/info/tests",
+      handler: "custom.getTests",
+    },
 
     {
       method: "POST",

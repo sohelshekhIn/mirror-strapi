@@ -455,4 +455,26 @@ module.exports = {
     delete studentDetails[0].id;
     return ctx.send({ ...studentUser["0"], ...studentDetails["0"] });
   },
+
+  async getTests(ctx) {
+    let userId = ctx.request.body.data.id;
+    // get marks
+    const marks = await strapi.entityService.findMany("api::mark.mark", {
+      limit: 10,
+    });
+
+    // handle errors
+    if (marks.error) {
+      return ctx.badRequest(marks.error);
+    }
+
+    // for every marks, get the test which is associated with FC0001
+    let tests = [];
+    for (let key in marks) {
+      if (marks[key].data.addedBy[0] === userId || userId === "*") {
+        tests.push(marks[key]);
+      }
+    }
+    return ctx.send(tests);
+  },
 };
