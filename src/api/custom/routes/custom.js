@@ -32,6 +32,11 @@ module.exports = {
       path: "/info/tests",
       handler: "custom.getTests",
     },
+    {
+      method: "POST",
+      path: "/info/submissions",
+      handler: "custom.getSubmissions",
+    },
 
     {
       method: "POST",

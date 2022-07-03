@@ -1,0 +1,21 @@
+{
+  "kind": "collectionType",
+  "collectionName": "submissions",
+  "info": {
+    "singularName": "submission",
+    "pluralName": "submissions",
+    "displayName": "Submissions"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "SubmissionId": {
+      "type": "string"
+    },
+    "data": {
+      "type": "json"
+    }
+  }
+}

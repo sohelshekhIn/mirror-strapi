@@ -484,4 +484,28 @@ module.exports = {
     }
     return ctx.send(tests);
   },
+  async getSubmissions(ctx) {
+    let userId = ctx.request.body.data.id;
+    // get marks
+    const submissions = await strapi.entityService.findMany(
+      "api::submission.submission",
+      {
+        limit: 10,
+      }
+    );
+
+    // handle errors
+    if (submissions.error) {
+      return ctx.badRequest(submissions.error);
+    }
+
+    // for every submissions, get the test which is associated with FC0001
+    let submissionsList = [];
+    for (let key in submissions) {
+      if (submissions[key].data.addedBy[0] === userId || userId === "*") {
+        submissionsList.push(submissions[key]);
+      }
+    }
+    return ctx.send(submissionsList);
+  },
 };
