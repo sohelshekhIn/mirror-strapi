@@ -17,4 +17,6 @@ module.exports = [
   "strapi::favicon",
   "strapi::public",
   "global::TokenSetter",
+  "api::batch.sort-middleware",
+  "api::custom.sort-middleware",
 ];

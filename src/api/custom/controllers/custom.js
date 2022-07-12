@@ -188,7 +188,6 @@ module.exports = {
     const email = userName + "@mirrorinstitue.com";
     // check which platform its running on
     const platform = process.platform;
-    console.log(platform);
     let studentRoleId = process.env.WIN_STUDENT_ROLE_ID;
     if (platform === "linux") {
       studentRoleId = process.env.LIN_STUDENT_ROLE_ID;
