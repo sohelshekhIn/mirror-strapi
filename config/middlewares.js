@@ -19,4 +19,5 @@ module.exports = [
   "global::TokenSetter",
   "api::batch.sort-middleware",
   "api::custom.sort-middleware",
+  "api::attendance.remove-null-arrays",
 ];

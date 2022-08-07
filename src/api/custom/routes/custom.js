@@ -10,7 +10,7 @@ module.exports = {
     {
       method: "GET",
       path: "/info/attendance/students",
-      handler: "custom.GetStudents",
+      handler: "custom.getStudentsForAttendance",
     },
     {
       method: "GET",
@@ -27,6 +27,16 @@ module.exports = {
       path: "/info/students/view-one",
       handler: "custom.getStudentForViewOne",
     },
+    {
+      method: "GET",
+      path: "/info/attendance/verify-batch",
+      handler: "custom.getAttendanceToVerifyBatch",
+    },
+    // {
+    //   method: "GET",
+    //   path: "/info/attendance/for-verify",
+    //   handler: "custom.getAttendanceForVerify",
+    // },
     {
       method: "POST",
       path: "/info/tests",

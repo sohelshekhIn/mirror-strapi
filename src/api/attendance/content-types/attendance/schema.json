@@ -19,12 +19,15 @@
     },
     "data": {
       "type": "json",
-      "required": true
+      "required": false
     },
     "AttendanceId": {
       "type": "string",
       "required": true,
       "unique": true
+    },
+    "reasonData": {
+      "type": "json"
     }
   }
 }
