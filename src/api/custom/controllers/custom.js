@@ -525,20 +525,30 @@ module.exports = {
       }
     );
 
-    let tempStudentsData = [];
+    let tempMergedData = [];
     for (let individualStudent of attendance[0].data) {
-      let studentsData = await strapi.entityService.findMany(
+      let studentsParentData = await strapi.entityService.findMany(
         "api::student-detail.student-detail",
         {
           filters: {
             UserID: individualStudent,
           },
-          fields: ["UserID", "motherName", "motherMobile", "msgMobile"],
+          fields: ["motherName", "motherMobile", "msgMobile"],
         }
       );
-      tempStudentsData.push(studentsData[0]);
+      let studentData = await strapi.entityService.findMany(
+        "plugin::users-permissions.user",
+        {
+          filters: {
+            UserID: individualStudent,
+          },
+          fields: ["UserID", "name"],
+        }
+      );
+      // mrege student data and parent data
+      tempMergedData.push({ ...studentsParentData[0], ...studentData[0] });
     }
-    attendance[0].studentData = tempStudentsData;
+    attendance[0].studentData = tempMergedData;
 
     if (attendance.error) {
       return ctx.badRequest(attendance.error);
@@ -582,13 +592,10 @@ module.exports = {
       return ctx.badRequest(submissions.error);
     }
 
-    response = strapi
-      .service("api::custom.send-sms")
-      .send("9265128338", "t-att", ["Sohel Shekh", "02/85/5022"]);
     // response = strapi
-    //   .service("api::custom.sendSMS")
-    //   .send(["9265128338", "t-att", ["Sohel Shekh", "02/85/5022"]]);
-    console.log(response);
+    //   .service("api::custom.send-sms")
+    //   .send("9265128338", "t-att", ["Sohel Shekh", "02/85/5022"]);
+    // console.log(response);
 
     // for every submissions, get the test which is associated with FC0001
     let submissionsList = [];
