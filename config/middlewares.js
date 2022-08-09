@@ -20,4 +20,5 @@ module.exports = [
   "api::batch.sort-middleware",
   "api::custom.sort-middleware",
   "api::attendance.remove-null-arrays",
+  "api::attendance.fire-attendance-sms",
 ];

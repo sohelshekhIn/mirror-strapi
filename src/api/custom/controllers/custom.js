@@ -468,50 +468,6 @@ module.exports = {
     return ctx.send({ ...studentUser["0"], ...studentDetails["0"] });
   },
 
-  // async getAttendanceForVerify(ctx) {
-  //     let today = new Date();
-  //     let dd = String(today.getDate()).padStart(2, "0");
-  //     let mm = String(today.getMonth() + 1).padStart(2, "0"); //January is 0!
-  //     let yyyy = today.getFullYear();
-  //     today = dd + "/" + mm + "/" + yyyy;
-
-  //     let attendance = await strapi.entityService.findMany(
-  //       "api::attendance.attendance",
-  //       {
-  //         filters: {
-  //           AttendanceId: { $contains: today },
-  //           data: { $notNull: true },
-  //           reasonData: { $null: true },
-  //         },
-  //       }
-  //     );
-  //   for (let key in attendance) {
-  //     // get length of attendance[key].data
-  //     let tempStudentsDataLength = [];
-  //     let length = attendance[key].data.length;
-
-  //     tempStudentsDataLength.push(length);
-  //     // for (let individualStudent of attendance[key].data) {
-  //     //   let studentsData = await strapi.entityService.findMany(
-  //     //     "api::student-detail.student-detail",
-  //     //     {
-  //     //       filters: {
-  //     //         UserID: individualStudent,
-  //     //       },
-  //     //       fields: ["UserID", "motherName", "motherMobile", "msgMobile"],
-  //     //     }
-  //     //   );
-  //     //   tempStudentsData.push(studentsData[0]);
-  //     // }
-  //     attendance[key].verifyData = tempStudentsData;
-  //   }
-
-  //   if (attendance.error) {
-  //     return ctx.badRequest(attendance.error);
-  //   }
-  //   return ctx.send(attendance);
-  // },
-
   async getAttendanceToVerifyBatch(ctx) {
     // get id from url
     const id = ctx.request.query.id;
