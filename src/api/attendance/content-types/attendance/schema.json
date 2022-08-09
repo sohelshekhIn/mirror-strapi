@@ -28,6 +28,11 @@
     },
     "reasonData": {
       "type": "json"
+    },
+    "reasonDataStatus": {
+      "type": "string",
+      "default": "not_verified",
+      "required": false
     }
   }
 }

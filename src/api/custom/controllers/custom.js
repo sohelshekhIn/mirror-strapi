@@ -516,42 +516,38 @@ module.exports = {
     // get id from url
     const id = ctx.request.query.id;
 
-    let attendance = await strapi.entityService.findMany(
-      "api::attendance.attendance",
-      {
-        filters: {
-          AttendanceId: id,
-        },
+    try {
+      var attendance = await strapi.entityService.findOne(
+        "api::attendance.attendance",
+        id
+      );
+      let tempMergedData = [];
+      for (let individualStudent of attendance.data) {
+        let studentsParentData = await strapi.entityService.findMany(
+          "api::student-detail.student-detail",
+          {
+            filters: {
+              UserID: individualStudent,
+            },
+            fields: ["motherName", "motherMobile", "msgMobile"],
+          }
+        );
+        let studentData = await strapi.entityService.findMany(
+          "plugin::users-permissions.user",
+          {
+            filters: {
+              UserID: individualStudent,
+            },
+            fields: ["UserID", "name"],
+          }
+        );
+        // mrege student data and parent data
+        tempMergedData.push({ ...studentsParentData[0], ...studentData[0] });
       }
-    );
-
-    let tempMergedData = [];
-    for (let individualStudent of attendance[0].data) {
-      let studentsParentData = await strapi.entityService.findMany(
-        "api::student-detail.student-detail",
-        {
-          filters: {
-            UserID: individualStudent,
-          },
-          fields: ["motherName", "motherMobile", "msgMobile"],
-        }
-      );
-      let studentData = await strapi.entityService.findMany(
-        "plugin::users-permissions.user",
-        {
-          filters: {
-            UserID: individualStudent,
-          },
-          fields: ["UserID", "name"],
-        }
-      );
-      // mrege student data and parent data
-      tempMergedData.push({ ...studentsParentData[0], ...studentData[0] });
-    }
-    attendance[0].studentData = tempMergedData;
-
-    if (attendance.error) {
-      return ctx.badRequest(attendance.error);
+      attendance.studentData = tempMergedData;
+    } catch (error) {
+      console.log(error);
+      return ctx.badRequest(error);
     }
     return ctx.send(attendance);
   },

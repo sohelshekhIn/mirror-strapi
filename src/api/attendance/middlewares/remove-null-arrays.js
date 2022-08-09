@@ -6,7 +6,7 @@ module.exports = () => {
       (context.request.method === "PUT" || context.request.method === "POST")
     ) {
       let requestBody = context.request.body.data;
-      if (requestBody.data.length === 0) {
+      if (requestBody.data?.length === 0) {
         context.request.body.data.data = null;
       }
     }
