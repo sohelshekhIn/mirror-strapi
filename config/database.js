@@ -13,6 +13,7 @@
 //     debug: false,
 //   },
 // });
+
 module.exports = ({ env }) => ({
   connection: {
     client: "postgres",

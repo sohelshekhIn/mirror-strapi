@@ -41,6 +41,7 @@ module.exports = {
       data.user = populatedUser;
       return ctx.send(data);
     } catch (error) {
+      console.log(error);
       // if error is invalid credentials return 400 with message "Invalid credentials"
       if (
         error.response.status === 400 &&

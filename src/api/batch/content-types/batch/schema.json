@@ -23,6 +23,9 @@
       "relation": "oneToMany",
       "target": "plugin::users-permissions.user",
       "mappedBy": "batch"
+    },
+    "timings": {
+      "type": "json"
     }
   }
 }
